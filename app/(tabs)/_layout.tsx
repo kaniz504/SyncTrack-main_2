@@ -1,64 +1,119 @@
-import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  Tabs,
+} from "expo-router";
+
+import {
+  Feather,
+} from "@expo/vector-icons";
 
 export default function TabLayout() {
   return (
-  
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: "#2563EB",
-        tabBarInactiveTintColor: "#64748B",
+
         tabBarStyle: {
           position: "absolute",
+
+          bottom: 16,
+
+          left: 16,
+
+          right: 16,
+
           height: 72,
-          bottom: 18,
-          left: 20,
-          right: 20,
-          borderRadius: 28,
-          backgroundColor: "#F8FAFC",
+
+          borderRadius: 24,
+
+          backgroundColor:
+            "#0F172A",
+
           borderTopWidth: 0,
-          elevation: 12,
+
+          elevation: 0,
+
+          shadowColor: "#000",
+
+          shadowOpacity: 0.2,
+
+          shadowRadius: 12,
+
+          paddingBottom: 10,
+
+          paddingTop: 10,
+        },
+
+        tabBarActiveTintColor:
+          "#7EA6FF",
+
+        tabBarInactiveTintColor:
+          "#64748B",
+
+        tabBarLabelStyle: {
+          fontSize: 12,
+
+          fontWeight: "700",
+
+          marginTop: 4,
         },
       }}
     >
+      {/* HOME */}
+
       <Tabs.Screen
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home-outline" size={size} color={color} />
-          ),
-        }}
-      />
 
-      <Tabs.Screen
-        name="dashboard"
-        options={{
-          title: "Dashboard",
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name="grid-outline"
-              size={26}
-              color="#FFFFFF"
-              style={{
-                backgroundColor: focused ? "#2563EB" : "#0F172A",
-                padding: 15,
-                borderRadius: 40,
-                marginBottom: 30,
-              }}
+          tabBarIcon: ({
+            color,
+            size,
+          }) => (
+            <Feather
+              name="home"
+              size={size}
+              color={color}
             />
           ),
         }}
       />
 
+      {/* DASHBOARD */}
+
       <Tabs.Screen
-        name="explore"
+        name="dashboard"
         options={{
-          title: "Analytics",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bar-chart-outline" size={size} color={color} />
+          title: "Dashboard",
+
+          tabBarIcon: ({
+            color,
+            size,
+          }) => (
+            <Feather
+              name="grid"
+              size={size}
+              color={color}
+            />
+          ),
+        }}
+      />
+
+      {/* PROFILE */}
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+
+          tabBarIcon: ({
+            color,
+            size,
+          }) => (
+            <Feather
+              name="user"
+              size={size}
+              color={color}
+            />
           ),
         }}
       />

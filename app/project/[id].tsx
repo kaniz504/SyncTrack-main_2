@@ -1,112 +1,85 @@
 import {
-  useLocalSearchParams,
-  router,
-} from "expo-router";
-
-import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  ActivityIndicator,
+  Linking,
 } from "react-native";
 
 import {
-  useEffect,
-  useState,
-} from "react";
+  Feather,
+} from "@expo/vector-icons";
 
 import {
-  getProjectById,
-} from "../../data/projects";
+  useLocalSearchParams,
+  router,
+} from "expo-router";
 
 export default function ProjectDetails() {
   const { id } =
     useLocalSearchParams();
 
-  const [project, setProject] =
-    useState<any>(null);
+  const project = {
+    title: "Campus Connect",
 
-  const [loading, setLoading] =
-    useState(true);
+    category:
+      "Application Design",
 
-  useEffect(() => {
-    loadProject();
-  }, []);
+    description:
+      "A smart student collaboration and communication platform designed for project tracking and team coordination.",
 
-  async function loadProject() {
-    try {
-      const data =
-        await getProjectById(
-          String(id)
-        );
+    progress: 80,
 
-      setProject(data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }
+    professor: "Layek Sir",
 
-  function getStatus(
-    progress: number
-  ) {
-    if (progress >= 80)
-      return "On Track";
+    students: 2,
 
-    if (progress >= 60)
-      return "Review";
+    priority: "Medium",
 
-    return "Attention";
-  }
+    milestones: "3 / 4",
 
-  if (loading) {
-    return (
-      <View
-        style={
-          styles.loaderContainer
-        }
-      >
-        <ActivityIndicator
-          size="large"
-          color="#2563EB"
-        />
+    updates: 4,
 
-        <Text
-          style={{
-            color: "white",
-            marginTop: 12,
-          }}
-        >
-          Loading Project...
-        </Text>
-      </View>
-    );
-  }
+    dueDate: "2026-06-01",
 
-  if (!project) {
-    return (
-      <View
-        style={
-          styles.loaderContainer
-        }
-      >
-        <Text
-          style={{
-            color: "white",
-          }}
-        >
-          Project not found
-        </Text>
-      </View>
-    );
-  }
+    teamMembers:
+      "Kaniz Fatema, Alfi Sharin Ninad",
 
-  const status = getStatus(
-    project.progress
-  );
+    github:
+      "https://github.com/",
+
+    pdf:
+      "https://drive.google.com/",
+
+    ppt:
+      "https://drive.google.com/",
+  };
+
+  const tasks = [
+    {
+      title:
+        "Project Planning",
+      completed: true,
+    },
+
+    {
+      title: "Dashboard UI",
+      completed: true,
+    },
+
+    {
+      title:
+        "Backend Integration",
+      completed: true,
+    },
+
+    {
+      title:
+        "Final Submission",
+      completed: false,
+    },
+  ];
 
   return (
     <ScrollView
@@ -114,19 +87,28 @@ export default function ProjectDetails() {
       showsVerticalScrollIndicator={
         false
       }
+      contentContainerStyle={{
+        paddingBottom: 120,
+      }}
     >
+      {/* BACK */}
+
       <TouchableOpacity
         onPress={() =>
           router.back()
         }
       >
         <Text style={styles.back}>
-          ← Back to Dashboard
+          ← Back
         </Text>
       </TouchableOpacity>
 
-      <View style={styles.heroCard}>
-        <Text style={styles.category}>
+      {/* HERO */}
+
+      <View style={styles.hero}>
+        <Text
+          style={styles.category}
+        >
           {project.category}
         </Text>
 
@@ -144,25 +126,17 @@ export default function ProjectDetails() {
           }
         </Text>
 
+        {/* PROGRESS */}
+
         <View
           style={
-            styles.progressHeader
+            styles.progressTop
           }
         >
           <Text
-            style={[
-              styles.status,
-
-              status ===
-                "On Track" &&
-                styles.statusGood,
-
-              status ===
-                "Attention" &&
-                styles.statusDanger,
-            ]}
+            style={styles.status}
           >
-            {status}
+            On Track
           </Text>
 
           <Text
@@ -171,13 +145,12 @@ export default function ProjectDetails() {
             }
           >
             {project.progress}%
-            Complete
           </Text>
         </View>
 
         <View
           style={
-            styles.progressBackground
+            styles.progressBg
           }
         >
           <View
@@ -187,131 +160,155 @@ export default function ProjectDetails() {
               {
                 width: `${project.progress}%`,
               },
-
-              status ===
-                "On Track" &&
-                styles.progressGood,
-
-              status ===
-                "Attention" &&
-                styles.progressDanger,
             ]}
-          />
-        </View>
-
-        <View style={styles.grid}>
-          <InfoCard
-            label="Due Date"
-            value={
-              project.dueDate
-            }
-          />
-
-          <InfoCard
-            label="Professor"
-            value={
-              project.professor
-            }
-          />
-
-          <InfoCard
-            label="Students"
-            value={String(
-              project.students
-            )}
-          />
-
-          <InfoCard
-            label="Priority"
-            value={
-              project.priority
-            }
-          />
-
-          <InfoCard
-            label="Milestones"
-            value={`${project.completedMilestones}/${project.totalMilestones}`}
-          />
-
-          <InfoCard
-            label="Week"
-            value={
-              project.weekNumber
-            }
           />
         </View>
       </View>
 
-      <View
-        style={styles.updatesCard}
-      >
+      {/* TEAM */}
+
+      <View style={styles.card}>
         <Text
-          style={
-            styles.sectionTitle
-          }
+          style={styles.sectionTitle}
         >
-          Latest Update
+          Team Members
         </Text>
 
         <View
-          style={styles.updateBox}
+          style={styles.memberRow}
         >
-          <Text
+          <View
             style={
-              styles.updateStudent
+              styles.avatar
             }
           >
-            {
-              project.studentName
-            }
-          </Text>
+            <Text
+              style={
+                styles.avatarText
+              }
+            >
+              K
+            </Text>
+          </View>
 
           <Text
             style={
-              styles.updateDate
+              styles.memberName
             }
           >
-            {
-              project.timestamp
-            }
-          </Text>
-
-          <Text
-            style={
-              styles.updateText
-            }
-          >
-            {
-              project.updateDetails
-            }
+            Kaniz Fatema
           </Text>
         </View>
 
-        <Text
-          style={
-            styles.sectionTitle
-          }
+        <View
+          style={styles.memberRow}
         >
-          Tasks
+          <View
+            style={
+              styles.avatar
+            }
+          >
+            <Text
+              style={
+                styles.avatarText
+              }
+            >
+              N
+            </Text>
+          </View>
+
+          <Text
+            style={
+              styles.memberName
+            }
+          >
+            Alfi Sharin Ninad
+          </Text>
+        </View>
+      </View>
+
+      {/* INFO */}
+
+      <View style={styles.card}>
+        <Text
+          style={styles.sectionTitle}
+        >
+          Project Info
         </Text>
 
-        {project.tasks.map(
-          (task: any) => (
+        <InfoRow
+          label="Professor"
+          value={
+            project.professor
+          }
+        />
+
+        <InfoRow
+          label="Students"
+          value={String(
+            project.students
+          )}
+        />
+
+        <InfoRow
+          label="Priority"
+          value={
+            project.priority
+          }
+        />
+
+        <InfoRow
+          label="Milestones"
+          value={
+            project.milestones
+          }
+        />
+
+        <InfoRow
+          label="Updates"
+          value={String(
+            project.updates
+          )}
+        />
+
+        <InfoRow
+          label="Deadline"
+          value={
+            project.dueDate
+          }
+        />
+      </View>
+
+      {/* TASKS */}
+
+      <View style={styles.card}>
+        <Text
+          style={styles.sectionTitle}
+        >
+          Milestones
+        </Text>
+
+        {tasks.map(
+          (task, index) => (
             <View
-              key={task.id}
+              key={index}
               style={
                 styles.taskRow
               }
             >
-              <Text
-                style={
-                  styles.taskIcon
+              <Feather
+                name={
+                  task.completed
+                    ? "check-circle"
+                    : "circle"
                 }
-              >
-                {task.completed
-                  ? "✅"
-                  : "⬜"}
-              </Text>
+                size={22}
+                color={
+                  task.completed
+                    ? "#67D56E"
+                    : "#64748B"
+                }
+              />
 
               <Text
                 style={
@@ -325,14 +322,101 @@ export default function ProjectDetails() {
         )}
       </View>
 
-      <View
-        style={{ height: 100 }}
-      />
+      {/* RESOURCES */}
+
+      <View style={styles.card}>
+        <Text
+          style={styles.sectionTitle}
+        >
+          Resources
+        </Text>
+
+        <View
+          style={
+            styles.resourceRow
+          }
+        >
+          <TouchableOpacity
+            style={
+              styles.resourceBtn
+            }
+            onPress={() =>
+              Linking.openURL(
+                project.github
+              )
+            }
+          >
+            <Feather
+              name="github"
+              size={18}
+              color="white"
+            />
+
+            <Text
+              style={
+                styles.resourceText
+              }
+            >
+              GitHub
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={
+              styles.resourceBtn
+            }
+            onPress={() =>
+              Linking.openURL(
+                project.pdf
+              )
+            }
+          >
+            <Feather
+              name="file-text"
+              size={18}
+              color="white"
+            />
+
+            <Text
+              style={
+                styles.resourceText
+              }
+            >
+              PDF
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={
+              styles.resourceBtn
+            }
+            onPress={() =>
+              Linking.openURL(
+                project.ppt
+              )
+            }
+          >
+            <Feather
+              name="monitor"
+              size={18}
+              color="white"
+            />
+
+            <Text
+              style={
+                styles.resourceText
+              }
+            >
+              PPT
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </ScrollView>
   );
 }
 
-function InfoCard({
+function InfoRow({
   label,
   value,
 }: {
@@ -340,7 +424,7 @@ function InfoCard({
   value: string;
 }) {
   return (
-    <View style={styles.infoCard}>
+    <View style={styles.infoRow}>
       <Text
         style={styles.infoLabel}
       >
@@ -359,182 +443,171 @@ function InfoCard({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#030712",
-    padding: 20,
-  },
-
-  loaderContainer: {
-    flex: 1,
-    backgroundColor: "#030712",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#020617",
+    padding: 18,
   },
 
   back: {
     color: "#7EA6FF",
-    fontSize: 18,
-    fontWeight: "600",
-    marginBottom: 20,
+    fontSize: 16,
+    fontWeight: "700",
+    marginBottom: 18,
   },
 
-  heroCard: {
+  hero: {
     backgroundColor: "#0F172A",
     borderRadius: 24,
     padding: 24,
-    marginBottom: 24,
     borderWidth: 1,
     borderColor: "#1E293B",
+    marginBottom: 18,
   },
 
   category: {
     color: "#7EA6FF",
-    fontSize: 16,
-    fontWeight: "600",
-    marginBottom: 10,
+    fontWeight: "800",
+    marginBottom: 12,
   },
 
   title: {
     color: "white",
-    fontSize: 40,
-    fontWeight: "bold",
-    marginBottom: 16,
+    fontSize: 34,
+    fontWeight: "900",
   },
 
   description: {
     color: "#CBD5E1",
-    lineHeight: 25,
-    marginBottom: 24,
+    lineHeight: 24,
+    marginTop: 14,
+    fontSize: 15,
   },
 
-  progressHeader: {
+  progressTop: {
     flexDirection: "row",
     justifyContent:
       "space-between",
+    marginTop: 24,
     marginBottom: 12,
   },
 
   status: {
-    color: "#FACC15",
-    fontWeight: "bold",
-    fontSize: 18,
-  },
-
-  statusGood: {
-    color: "#4ADE80",
-  },
-
-  statusDanger: {
-    color: "#EF4444",
+    color: "#67D56E",
+    fontWeight: "900",
+    fontSize: 16,
   },
 
   progressText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "900",
+    fontSize: 18,
   },
 
-  progressBackground: {
-    height: 14,
+  progressBg: {
+    height: 12,
     backgroundColor: "#1E293B",
     borderRadius: 20,
     overflow: "hidden",
-    marginBottom: 28,
   },
 
   progressFill: {
     height: "100%",
-    backgroundColor: "#FACC15",
+    backgroundColor: "#67D56E",
+    borderRadius: 20,
   },
 
-  progressGood: {
-    backgroundColor: "#4ADE80",
-  },
-
-  progressDanger: {
-    backgroundColor: "#EF4444",
-  },
-
-  grid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent:
-      "space-between",
-    gap: 14,
-  },
-
-  infoCard: {
-    width: "48%",
-    backgroundColor: "#020617",
-    borderRadius: 18,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#1E293B",
-  },
-
-  infoLabel: {
-    color: "#94A3B8",
-    marginBottom: 8,
-  },
-
-  infoValue: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 20,
-  },
-
-  updatesCard: {
+  card: {
     backgroundColor: "#0F172A",
     borderRadius: 24,
-    padding: 24,
+    padding: 22,
     borderWidth: 1,
     borderColor: "#1E293B",
+    marginBottom: 18,
   },
 
   sectionTitle: {
     color: "white",
-    fontSize: 26,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "900",
+    marginBottom: 20,
+  },
+
+  memberRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 18,
   },
 
-  updateBox: {
-    backgroundColor: "#020617",
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 28,
-    borderWidth: 1,
-    borderColor: "#1E293B",
+  avatar: {
+    width: 46,
+    height: 46,
+    borderRadius: 100,
+    backgroundColor: "#4F6EF7",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 14,
   },
 
-  updateStudent: {
+  avatarText: {
     color: "white",
-    fontWeight: "bold",
+    fontWeight: "900",
     fontSize: 18,
   },
 
-  updateDate: {
-    color: "#94A3B8",
-    marginTop: 6,
-    marginBottom: 12,
+  memberName: {
+    color: "white",
+    fontSize: 16,
+    fontWeight: "700",
   },
 
-  updateText: {
-    color: "#CBD5E1",
-    lineHeight: 24,
+  infoRow: {
+    flexDirection: "row",
+    justifyContent:
+      "space-between",
+    marginBottom: 18,
+  },
+
+  infoLabel: {
+    color: "#94A3B8",
+    fontSize: 15,
+  },
+
+  infoValue: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 15,
   },
 
   taskRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 14,
-  },
-
-  taskIcon: {
-    fontSize: 20,
-    marginRight: 12,
+    marginBottom: 18,
   },
 
   taskText: {
     color: "white",
+    marginLeft: 14,
     fontSize: 16,
+  },
+
+  resourceRow: {
+    flexDirection: "row",
+    gap: 12,
+    flexWrap: "wrap",
+  },
+
+  resourceBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4F6EF7",
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderRadius: 16,
+    gap: 8,
+  },
+
+  resourceText: {
+    color: "white",
+    fontWeight: "800",
+    fontSize: 14,
   },
 });

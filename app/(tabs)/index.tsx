@@ -157,9 +157,7 @@ export default function HomeScreen() {
           SyncTrack
         </Text>
 
-        <Text style={styles.title}>
-          Manage Projects Smarter
-        </Text>
+        
 
         <Text
           style={styles.subtitle}
@@ -170,20 +168,7 @@ export default function HomeScreen() {
           one clean dashboard.
         </Text>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() =>
-            router.push(
-              "/(tabs)/dashboard"
-            )
-          }
-        >
-          <Text
-            style={styles.buttonText}
-          >
-            View Dashboard
-          </Text>
-        </TouchableOpacity>
+       
       </View>
 
       <View style={styles.statsRow}>
@@ -203,38 +188,7 @@ export default function HomeScreen() {
         />
       </View>
 
-      {upcomingProject && (
-        <View
-          style={styles.insightCard}
-        >
-          <Text
-            style={
-              styles.insightTitle
-            }
-          >
-            Smart Overview
-          </Text>
-
-          <Text
-            style={
-              styles.insightText
-            }
-          >
-            {attentionProjects}{" "}
-            project needs urgent
-            attention. Next
-            deadline:{" "}
-            {
-              upcomingProject.title
-            }{" "}
-            on{" "}
-            {
-              upcomingProject.dueDate
-            }
-            .
-          </Text>
-        </View>
-      )}
+      
 
       <TextInput
         style={styles.searchInput}

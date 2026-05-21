@@ -156,24 +156,7 @@ export default function Dashboard() {
         paddingBottom: 120,
       }}
     >
-      {/* HEADER */}
-
-      <View style={styles.header}>
-        <Text style={styles.logo}>
-          SyncTrack
-        </Text>
-
-        <Text style={styles.title}>
-          Dashboard
-        </Text>
-
-        <Text
-          style={styles.subtitle}
-        >
-          Track student projects
-          and weekly submissions.
-        </Text>
-      </View>
+      
 
       {/* FORM */}
 
