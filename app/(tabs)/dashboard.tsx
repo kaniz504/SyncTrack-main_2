@@ -1,46 +1,33 @@
 import { useEffect, useState } from "react";
 
 import {
-  View,
-  Text,
+  ActivityIndicator,
+  Linking,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
+  Text,
   TouchableOpacity,
-  Linking,
+  View,
 } from "react-native";
-
-import { router } from "expo-router";
 
 const API_URL =
   "https://sheetdb.io/api/v1/sif1s2zbyslya";
 
+const FORM_LINK =
+  "https://docs.google.com/forms/d/e/1FAIpQLSd59MAxyyTne1lu0Lih_QBaUhwK4Yf-FwkZhFIf9JTbQmM0vg/viewform?usp=publish-editor";
+
 interface Project {
   timestamp: string;
-
-  studentId: string;
-
   studentName: string;
-
   teamMembers: string;
-
   projectTitle: string;
-
   courseName: string;
-
   weekNumber: string;
-
   progress: number;
-
   updateDetails: string;
-
   github: string;
-
   drive: string;
-
-  figma: string;
-
-  demo: string;
+  ppt: string;
 }
 
 export default function Dashboard() {
@@ -67,24 +54,25 @@ export default function Dashboard() {
           timestamp:
             item.Timestamp || "",
 
-          studentId:
-            item["Student ID"] || "",
-
           studentName:
-            item["Student Name"] || "",
+            item["Student Name"] ||
+            "",
 
           teamMembers:
-            item["Team Members"] || "",
+            item["Team Members"] ||
+            "",
 
           projectTitle:
             item["Project Title"] ||
             "Untitled Project",
 
           courseName:
-            item["Course Name"] || "",
+            item["Course Name"] ||
+            "",
 
           weekNumber:
-            item["Week Number"] || "",
+            item["Week Number"] ||
+            "",
 
           progress: parseInt(
             item[
@@ -94,8 +82,9 @@ export default function Dashboard() {
           ),
 
           updateDetails:
-            item["Update Details"] ||
-            "",
+            item[
+              "Update Details"
+            ] || "",
 
           github:
             item[
@@ -107,23 +96,15 @@ export default function Dashboard() {
               "Google Drive Link"
             ] || "",
 
-          figma:
+          ppt:
             item[
               "Figma Design Link"
-            ] || "",
-
-          demo:
-            item[
-              "Demo Video Link"
             ] || "",
         }));
 
       setProjects(cleanedData);
     } catch (error) {
-      console.log(
-        "API ERROR:",
-        error
-      );
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -132,32 +113,14 @@ export default function Dashboard() {
   function getStatus(
     progress: number
   ) {
-    if (progress >= 80)
+    if (progress >= 75)
       return "On Track";
 
-    if (progress >= 60)
+    if (progress >= 50)
       return "Review";
 
     return "Attention";
   }
-
-  const totalProjects =
-    projects.length;
-
-  const averageProgress =
-    Math.round(
-      projects.reduce(
-        (sum, p) =>
-          sum + p.progress,
-        0
-      ) /
-        (projects.length || 1)
-    );
-
-  const attentionProjects =
-    projects.filter(
-      (p) => p.progress < 60
-    ).length;
 
   if (loading) {
     return (
@@ -168,16 +131,16 @@ export default function Dashboard() {
       >
         <ActivityIndicator
           size="large"
-          color="#2563EB"
+          color="#4F6EF7"
         />
 
         <Text
           style={{
             color: "white",
-            marginTop: 12,
+            marginTop: 10,
           }}
         >
-          Loading Projects...
+          Loading Dashboard...
         </Text>
       </View>
     );
@@ -189,618 +152,656 @@ export default function Dashboard() {
       showsVerticalScrollIndicator={
         false
       }
+      contentContainerStyle={{
+        paddingBottom: 120,
+      }}
     >
-      <View style={styles.hero}>
-        <Text style={styles.appName}>
+      {/* HEADER */}
+
+      <View style={styles.header}>
+        <Text style={styles.logo}>
           SyncTrack
         </Text>
 
-        <Text style={styles.heroTitle}>
+        <Text style={styles.title}>
           Dashboard
         </Text>
 
         <Text
-          style={styles.heroSubtitle}
+          style={styles.subtitle}
         >
-          Monitor project progress,
-          teams, and recent
-          activities.
+          Track student projects
+          and weekly submissions.
         </Text>
       </View>
 
-      <View style={styles.statsRow}>
-        <StatCard
-          value={totalProjects}
-          label="Projects"
-        />
+      {/* FORM */}
 
-        <StatCard
-          value={`${averageProgress}%`}
-          label="Average"
-        />
-
-        <StatCard
-          value={attentionProjects}
-          label="Attention"
-        />
-      </View>
-
-      <View style={styles.dashboardRow}>
-        {/* LEFT PANEL */}
-
-        <View style={styles.leftPanel}>
-          <View
-            style={styles.panelHeader}
+      <View style={styles.formCard}>
+        <View>
+          <Text
+            style={styles.formTitle}
           >
-            <Text
-              style={styles.panelTitle}
-            >
-              Projects Overview
-            </Text>
-          </View>
+            Weekly Submission Form
+          </Text>
 
-          {projects.map(
-            (project, index) => {
-              const status =
-                getStatus(
-                  project.progress
-                );
-
-              return (
-                <TouchableOpacity
-                  key={index}
-                  style={
-                    styles.projectRow
-                  }
-                  onPress={() =>
-                    router.push(
-                      `/project/${index}`
-                    )
-                  }
-                >
-                  <View
-                    style={
-                      styles.projectInfo
-                    }
-                  >
-                    <Text
-                      style={
-                        styles.projectTitle
-                      }
-                    >
-                      {
-                        project.projectTitle
-                      }
-                    </Text>
-
-                    <Text
-                      style={
-                        styles.projectSub
-                      }
-                    >
-                      {
-                        project.courseName
-                      }
-                    </Text>
-
-                    <Text
-                      style={
-                        styles.teamText
-                      }
-                    >
-                      👥{" "}
-                      {
-                        project.teamMembers
-                      }
-                    </Text>
-                  </View>
-
-                  <View
-                    style={
-                      styles.progressContainer
-                    }
-                  >
-                    <Text
-                      style={
-                        styles.progressPercent
-                      }
-                    >
-                      {
-                        project.progress
-                      }
-                      %
-                    </Text>
-
-                    <View
-                      style={
-                        styles.progressBg
-                      }
-                    >
-                      <View
-                        style={[
-                          styles.progressFill,
-
-                          {
-                            width: `${project.progress}%`,
-                          },
-
-                          status ===
-                            "On Track" &&
-                            styles.progressGood,
-
-                          status ===
-                            "Attention" &&
-                            styles.progressDanger,
-                        ]}
-                      />
-                    </View>
-                  </View>
-
-                  <View
-                    style={[
-                      styles.statusBadge,
-
-                      status ===
-                        "On Track" &&
-                        styles.badgeGood,
-
-                      status ===
-                        "Attention" &&
-                        styles.badgeDanger,
-                    ]}
-                  >
-                    <Text
-                      style={
-                        styles.badgeText
-                      }
-                    >
-                      {status}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            }
-          )}
+          <Text
+            style={styles.formSubtitle}
+          >
+            Students can submit
+            weekly updates here.
+          </Text>
         </View>
 
-        {/* RIGHT PANEL */}
-
-        <View style={styles.rightPanel}>
-          <View
-            style={styles.panelHeader}
+        <TouchableOpacity
+          style={styles.formBtn}
+          onPress={() =>
+            Linking.openURL(
+              FORM_LINK
+            )
+          }
+        >
+          <Text
+            style={styles.formBtnText}
           >
-            <Text
-              style={styles.panelTitle}
-            >
-              Recent Activity
-            </Text>
-          </View>
+            Open Form
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-          {projects.map(
-            (project, index) => (
+      {/* PROJECTS */}
+
+      <Text style={styles.section}>
+        Projects Overview
+      </Text>
+
+      {projects.map(
+        (project, index) => {
+          const status =
+            getStatus(
+              project.progress
+            );
+
+          return (
+            <View
+              key={index}
+              style={
+                styles.projectCard
+              }
+            >
+              {/* TOP */}
+
               <View
-                key={index}
                 style={
-                  styles.activityCard
+                  styles.projectTop
                 }
               >
                 <View
-                  style={
-                    styles.activityDot
-                  }
-                />
-
-                <View
-                  style={
-                    styles.activityContent
-                  }
+                  style={{ flex: 1 }}
                 >
                   <Text
                     style={
-                      styles.activityText
-                    }
-                  >
-                    <Text
-                      style={
-                        styles.activityName
-                      }
-                    >
-                      {
-                        project.studentName
-                      }
-                    </Text>{" "}
-                    updated{" "}
-                    <Text
-                      style={
-                        styles.activityProject
-                      }
-                    >
-                      {
-                        project.projectTitle
-                      }
-                    </Text>
-                  </Text>
-
-                  <Text
-                    style={
-                      styles.activityUpdate
+                      styles.projectTitle
                     }
                   >
                     {
-                      project.updateDetails
+                      project.projectTitle
                     }
                   </Text>
 
                   <Text
                     style={
-                      styles.activityTime
+                      styles.course
                     }
                   >
                     {
-                      project.timestamp
+                      project.courseName
                     }
                   </Text>
-
-                  <View
-                    style={
-                      styles.linkRow
-                    }
-                  >
-                    {project.github !==
-                      "" && (
-                      <TouchableOpacity
-                        onPress={() =>
-                          Linking.openURL(
-                            project.github
-                          )
-                        }
-                      >
-                        <Text
-                          style={
-                            styles.linkText
-                          }
-                        >
-                          GitHub
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    {project.drive !==
-                      "" && (
-                      <TouchableOpacity
-                        onPress={() =>
-                          Linking.openURL(
-                            project.drive
-                          )
-                        }
-                      >
-                        <Text
-                          style={
-                            styles.linkText
-                          }
-                        >
-                          Drive
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    {project.figma !==
-                      "" && (
-                      <TouchableOpacity
-                        onPress={() =>
-                          Linking.openURL(
-                            project.figma
-                          )
-                        }
-                      >
-                        <Text
-                          style={
-                            styles.linkText
-                          }
-                        >
-                          Figma
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-
-                    {project.demo !==
-                      "" && (
-                      <TouchableOpacity
-                        onPress={() =>
-                          Linking.openURL(
-                            project.demo
-                          )
-                        }
-                      >
-                        <Text
-                          style={
-                            styles.linkText
-                          }
-                        >
-                          Demo
-                        </Text>
-                      </TouchableOpacity>
-                    )}
-                  </View>
                 </View>
+
+                <Text
+                  style={
+                    styles.percent
+                  }
+                >
+                  {
+                    project.progress
+                  }
+                  %
+                </Text>
               </View>
-            )
-          )}
-        </View>
+
+              {/* TEAM */}
+
+              <Text
+                style={
+                  styles.teamText
+                }
+              >
+                👥{" "}
+                {
+                  project.teamMembers
+                }
+              </Text>
+
+              {/* BAR */}
+
+              <View
+                style={
+                  styles.progressBg
+                }
+              >
+                <View
+                  style={[
+                    styles.progressFill,
+
+                    {
+                      width: `${project.progress}%`,
+                    },
+
+                    status ===
+                      "On Track" &&
+                      styles.green,
+
+                    status ===
+                      "Review" &&
+                      styles.orange,
+
+                    status ===
+                      "Attention" &&
+                      styles.red,
+                  ]}
+                />
+              </View>
+
+              {/* FOOTER */}
+
+              <View
+                style={
+                  styles.projectFooter
+                }
+              >
+                <Text
+                  style={[
+                    styles.status,
+
+                    status ===
+                      "On Track" &&
+                      styles.greenText,
+
+                    status ===
+                      "Review" &&
+                      styles.orangeText,
+
+                    status ===
+                      "Attention" &&
+                      styles.redText,
+                  ]}
+                >
+                  {status}
+                </Text>
+
+                <Text
+                  style={
+                    styles.week
+                  }
+                >
+                  {
+                    project.weekNumber
+                  }
+                </Text>
+              </View>
+
+              {/* UPDATE */}
+
+              <View
+                style={
+                  styles.updateBox
+                }
+              >
+                <Text
+                  style={
+                    styles.updateLabel
+                  }
+                >
+                  Recent Update
+                </Text>
+
+                <Text
+                  style={
+                    styles.updateText
+                  }
+                >
+                  {
+                    project.updateDetails
+                  }
+                </Text>
+              </View>
+
+              {/* RESOURCES */}
+
+              <View
+                style={
+                  styles.resourceRow
+                }
+              >
+                {project.github ? (
+                  <TouchableOpacity
+                    style={
+                      styles.resourceBtn
+                    }
+                    onPress={() =>
+                      Linking.openURL(
+                        project.github
+                      )
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.resourceText
+                      }
+                    >
+                      GitHub
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+
+                {project.drive ? (
+                  <TouchableOpacity
+                    style={
+                      styles.resourceBtn
+                    }
+                    onPress={() =>
+                      Linking.openURL(
+                        project.drive
+                      )
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.resourceText
+                      }
+                    >
+                      PDF
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+
+                {project.ppt ? (
+                  <TouchableOpacity
+                    style={
+                      styles.resourceBtn
+                    }
+                    onPress={() =>
+                      Linking.openURL(
+                        project.ppt
+                      )
+                    }
+                  >
+                    <Text
+                      style={
+                        styles.resourceText
+                      }
+                    >
+                      PPT
+                    </Text>
+                  </TouchableOpacity>
+                ) : null}
+              </View>
+            </View>
+          );
+        }
+      )}
+
+      {/* RECENT ACTIVITY */}
+
+      <Text style={styles.section}>
+        Recent Activity
+      </Text>
+
+      <View style={styles.activityCard}>
+        {projects.map(
+          (project, index) => (
+            <View
+              key={index}
+              style={
+                styles.activityItem
+              }
+            >
+              <View
+                style={
+                  styles.dot
+                }
+              />
+
+              <View
+                style={{
+                  flex: 1,
+                }}
+              >
+                <Text
+                  style={
+                    styles.activityText
+                  }
+                >
+                  <Text
+                    style={{
+                      fontWeight:
+                        "900",
+                    }}
+                  >
+                    {
+                      project.studentName
+                    }
+                  </Text>{" "}
+                  updated{" "}
+                  <Text
+                    style={{
+                      color:
+                        "#7EA6FF",
+                      fontWeight:
+                        "700",
+                    }}
+                  >
+                    {
+                      project.projectTitle
+                    }
+                  </Text>
+                </Text>
+
+                <Text
+                  style={
+                    styles.activityUpdate
+                  }
+                >
+                  {
+                    project.updateDetails
+                  }
+                </Text>
+
+                <Text
+                  style={
+                    styles.activityTime
+                  }
+                >
+                  {
+                    project.timestamp
+                  }
+                </Text>
+              </View>
+            </View>
+          )
+        )}
       </View>
-
-      <View
-        style={{ height: 80 }}
-      />
     </ScrollView>
-  );
-}
-
-function StatCard({
-  value,
-  label,
-}: {
-  value: string | number;
-  label: string;
-}) {
-  return (
-    <View style={styles.statCard}>
-      <Text
-        style={styles.statNumber}
-      >
-        {value}
-      </Text>
-
-      <Text
-        style={styles.statLabel}
-      >
-        {label}
-      </Text>
-    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#0B1120",
+    backgroundColor: "#020617",
     padding: 18,
   },
 
   loaderContainer: {
     flex: 1,
-    backgroundColor: "#0B1120",
+    backgroundColor: "#020617",
     justifyContent: "center",
     alignItems: "center",
   },
 
-  hero: {
-    backgroundColor: "#111827",
-    borderRadius: 28,
+  header: {
+    backgroundColor: "#0F172A",
+    borderRadius: 24,
     padding: 24,
-    marginBottom: 20,
+    marginBottom: 18,
     borderWidth: 1,
     borderColor: "#1E293B",
   },
 
-  appName: {
-    color: "#60A5FA",
+  logo: {
+    color: "#7EA6FF",
     fontWeight: "900",
-    marginBottom: 12,
+    fontSize: 16,
   },
 
-  heroTitle: {
+  title: {
     color: "white",
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "900",
+    marginTop: 10,
   },
 
-  heroSubtitle: {
+  subtitle: {
     color: "#CBD5E1",
     marginTop: 12,
     lineHeight: 22,
+    fontSize: 15,
   },
 
-  statsRow: {
-    flexDirection: "row",
-    gap: 10,
-    marginBottom: 22,
-  },
-
-  statCard: {
-    flex: 1,
-    backgroundColor: "#020617",
+  formCard: {
+    backgroundColor: "#0F172A",
+    borderRadius: 22,
+    padding: 20,
+    marginBottom: 24,
     borderWidth: 1,
     borderColor: "#1E293B",
-    borderRadius: 18,
-    padding: 18,
-  },
 
-  statNumber: {
-    color: "white",
-    fontSize: 24,
-    fontWeight: "900",
-  },
-
-  statLabel: {
-    color: "#94A3B8",
-    marginTop: 6,
-    fontSize: 12,
-  },
-
-  dashboardRow: {
-    flexDirection: "row",
-    gap: 18,
+    flexDirection: "column",
     alignItems: "flex-start",
   },
 
-  leftPanel: {
-    flex: 1.2,
-    backgroundColor: "#111827",
-    borderRadius: 24,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#1E293B",
-  },
-
-  rightPanel: {
-    flex: 1,
-    backgroundColor: "#111827",
-    borderRadius: 24,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: "#1E293B",
-  },
-
-  panelHeader: {
-    marginBottom: 18,
-  },
-
-  panelTitle: {
+  formTitle: {
     color: "white",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: "900",
   },
 
-  projectRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent:
-      "space-between",
-    backgroundColor: "#0B1120",
-    borderRadius: 18,
-    padding: 16,
-    marginBottom: 14,
+  formSubtitle: {
+    color: "#CBD5E1",
+    marginTop: 8,
+    fontSize: 14,
+    lineHeight: 22,
   },
 
-  projectInfo: {
-    flex: 1,
+  formBtn: {
+    backgroundColor: "#4F6EF7",
+    paddingHorizontal: 22,
+    paddingVertical: 14,
+    borderRadius: 16,
+    marginTop: 18,
+    alignSelf: "flex-start",
+  },
+
+  formBtnText: {
+    color: "white",
+    fontWeight: "900",
+    fontSize: 15,
+  },
+
+  section: {
+    color: "white",
+    fontSize: 30,
+    fontWeight: "900",
+    marginBottom: 18,
+  },
+
+  projectCard: {
+    backgroundColor: "#0F172A",
+    borderRadius: 24,
+    padding: 20,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: "#1E293B",
+  },
+
+  projectTop: {
+    flexDirection: "row",
+    justifyContent:
+      "space-between",
+    alignItems: "center",
   },
 
   projectTitle: {
     color: "white",
-    fontSize: 16,
+    fontSize: 24,
     fontWeight: "900",
   },
 
-  projectSub: {
+  course: {
     color: "#94A3B8",
-    marginTop: 4,
-    fontSize: 12,
+    marginTop: 6,
+    fontSize: 15,
+  },
+
+  percent: {
+    color: "#7EA6FF",
+    fontSize: 30,
+    fontWeight: "900",
+    marginLeft: 12,
   },
 
   teamText: {
-    color: "#CBD5E1",
-    marginTop: 8,
-    fontSize: 12,
-  },
-
-  progressContainer: {
-    width: 140,
-    marginHorizontal: 18,
-  },
-
-  progressPercent: {
-    color: "#60A5FA",
-    marginBottom: 6,
-    fontWeight: "800",
+    color: "#E2E8F0",
+    marginTop: 18,
+    fontSize: 16,
+    lineHeight: 24,
   },
 
   progressBg: {
-    height: 8,
+    height: 12,
     backgroundColor: "#1E293B",
     borderRadius: 20,
+    marginTop: 20,
     overflow: "hidden",
   },
 
   progressFill: {
     height: "100%",
-    backgroundColor: "#F59E0B",
     borderRadius: 20,
   },
 
-  progressGood: {
-    backgroundColor: "#22C55E",
+  green: {
+    backgroundColor: "#67D56E",
   },
 
-  progressDanger: {
+  orange: {
+    backgroundColor: "#F59E0B",
+  },
+
+  red: {
     backgroundColor: "#EF4444",
   },
 
-  statusBadge: {
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: "#3F3F46",
+  projectFooter: {
+    flexDirection: "row",
+    justifyContent:
+      "space-between",
+    alignItems: "center",
+    marginTop: 18,
   },
 
-  badgeGood: {
-    backgroundColor: "#14532D",
+  status: {
+    fontWeight: "900",
+    fontSize: 16,
   },
 
-  badgeDanger: {
-    backgroundColor: "#7F1D1D",
+  greenText: {
+    color: "#67D56E",
   },
 
-  badgeText: {
+  orangeText: {
+    color: "#F59E0B",
+  },
+
+  redText: {
+    color: "#EF4444",
+  },
+
+  week: {
+    color: "#94A3B8",
+    fontSize: 16,
+  },
+
+  updateBox: {
+    backgroundColor: "#111C34",
+    borderRadius: 18,
+    padding: 18,
+    marginTop: 18,
+  },
+
+  updateLabel: {
+    color: "#7EA6FF",
+    fontWeight: "800",
+    marginBottom: 10,
+    fontSize: 16,
+  },
+
+  updateText: {
+    color: "white",
+    lineHeight: 24,
+    fontSize: 15,
+  },
+
+  resourceRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginTop: 18,
+    flexWrap: "wrap",
+  },
+
+  resourceBtn: {
+    backgroundColor: "#4F6EF7",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 14,
+  },
+
+  resourceText: {
     color: "white",
     fontWeight: "800",
-    fontSize: 12,
+    fontSize: 14,
   },
 
   activityCard: {
+    backgroundColor: "#0F172A",
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: "#1E293B",
+  },
+
+  activityItem: {
     flexDirection: "row",
-    marginBottom: 20,
+    marginBottom: 22,
   },
 
-  activityDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 20,
-    backgroundColor: "#2563EB",
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 100,
+    backgroundColor: "#5B7FFF",
     marginTop: 8,
-    marginRight: 12,
-  },
-
-  activityContent: {
-    flex: 1,
+    marginRight: 14,
   },
 
   activityText: {
-    color: "#E2E8F0",
-    lineHeight: 22,
-  },
-
-  activityName: {
     color: "white",
-    fontWeight: "bold",
-  },
-
-  activityProject: {
-    color: "#60A5FA",
-    fontWeight: "bold",
+    fontSize: 15,
+    lineHeight: 24,
   },
 
   activityUpdate: {
     color: "#CBD5E1",
-    marginTop: 6,
+    marginTop: 8,
+    fontSize: 14,
   },
 
   activityTime: {
     color: "#64748B",
-    marginTop: 6,
+    marginTop: 8,
     fontSize: 12,
-  },
-
-  linkRow: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: 10,
-    marginTop: 12,
-  },
-
-  linkText: {
-    color: "#60A5FA",
-    fontWeight: "700",
   },
 });
